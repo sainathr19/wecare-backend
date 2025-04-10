@@ -1,54 +1,42 @@
-import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import dotenv from "dotenv";
-import { handleError } from "../utils/errorUtility";
+// import { Request, Response, NextFunction } from "express";
+// import jwt from "jsonwebtoken";
+// import { response } from "../utils/responseHandler";
+// import { UserRole } from "../types/user";
 
-dotenv.config();
+// export interface AuthRequest extends Request {
+//   user?: {
+//     id: string;
+//     email: string;
+//     role: UserRole;
+//     username?: string;
+//   };
+// }
 
-interface AuthRequest extends Request {
-  username?: string;
-}
+// export const auth = () => (
+//   req: Request, 
+//   res: Response, 
+//   next: NextFunction
+// ) => {
+//   try {
+//     const token = req.headers.authorization?.split(" ")[1];
+//     if (!token) {
+//       return response.err(res, "No token provided", 401);
+//     }
 
-const authenticateToken = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-): Response | void => {
-  try {
-    const jwtToken = req.cookies?.authToken;
+//     const decoded = jwt.verify(token, process.env.SECRET_KEY!) as {
+//       id: string;
+//       email: string;
+//       role: UserRole;
+//       username?: string;
+//     };
 
-    if (!jwtToken) {
-      return res
-        .status(401)
-        .json({ status: "error", message: "Invalid JWT Token" });
-    }
+//     if (roles.length && !roles.includes(decoded.role)) {
+//       return response.err(res, `Access denied. Required role: ${roles.join(" or ")}`, 403);
+//     }
 
-    const secretKey = process.env.SECRET_KEY;
-    if (!secretKey) {
-      throw new Error("Secret key is missing from environment variables");
-    }
-
-    jwt.verify(
-      jwtToken,
-      secretKey,
-      (
-        error: jwt.VerifyErrors | null,
-        payload: string | JwtPayload | undefined
-      ) => {
-        if (error) {
-          return res
-            .status(401)
-            .json({ status: "error", message: error.message });
-        }
-
-        const decodedPayload = payload as JwtPayload;
-        req.username = decodedPayload.username;
-        next();
-      }
-    );
-  } catch (error) {
-    return handleError(res, error);
-  }
-};
-
-export default authenticateToken;
+//     (req as AuthRequest).user = decoded;
+//     next();
+//   } catch (error) {
+//     return response.err(res, "Invalid token", 401);
+//   }
+// };

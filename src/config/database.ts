@@ -1,28 +1,48 @@
-import dotenv from "dotenv";
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { UserRole } from "../types/user";
+import dotenv from 'dotenv';
+
 dotenv.config();
 
-const connection = mongoose.createConnection(process.env.MONGO_URI as string);
+const MONGODB_URI = process.env.MONGODB_URI;
 
-connection.on("error", (err) => {
-  console.log("Error Connecting to Database");
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI is not defined in environment variables');
+  process.exit(1);
+}
+
+mongoose.connect(MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch((err) => {
+  console.error('Failed to connect to MongoDB:', err);
+  process.exit(1);
 });
 
-connection.on("connected", function () {
-  console.log("Connection successfull");
+// Add connection error handling
+mongoose.connection.on('error', err => {
+  console.error('MongoDB connection error:', err);
 });
 
-connection.on("disconnected", function () {
-  console.log("Connection Lost");
+// Add customId to the interface
+interface IUser extends Document {
+  username: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  userId: string;
+}
+
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  role: { type: String, required: true },
+  userId: { type: String, required: true, unique: true }
 });
 
-const authdb = connection.useDb("auth");
+const creds = mongoose.model<IUser>("User", userSchema);
 
-const CredentialSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-});
-
-const credentials = authdb.model("credentials", CredentialSchema);
-
-export default credentials;
+export default creds;
