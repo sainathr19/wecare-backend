@@ -5,18 +5,20 @@ WORKDIR /app
 # Enable Corepack and set up Yarn
 RUN corepack enable && corepack prepare yarn@4.5.1 --activate
 
-COPY package*.json ./
-COPY .yarn* ./
-COPY yarn.lock ./
+# Copy package files
+COPY package.json ./
+COPY .yarnrc.yml ./
+COPY .yarn ./.yarn
 
-# Install dependencies
+# Initialize yarn and install dependencies
+RUN yarn set version 4.5.1
 RUN yarn install
 
 # Copy source files
 COPY . .
 
 # Build the application
-RUN yarn install && yarn build
+RUN yarn build
 
 EXPOSE 5000
 
