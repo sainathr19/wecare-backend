@@ -1,25 +1,31 @@
-FROM node:18-alpine
+# Build Stage
+FROM node:20-slim AS builder
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Enable Corepack and set up Yarn
-RUN corepack enable && corepack prepare yarn@4.5.1 --activate
+# Copy package files first for better caching
+COPY package.json package-lock.json ./
 
-# Copy package files
-COPY package.json ./
-COPY .yarnrc.yml ./
-COPY .yarn ./.yarn
+EXPOSE 5014
 
-# Initialize yarn and install dependencies
-RUN yarn set version 4.5.1
-RUN yarn install
+# Use npm ci for clean, repeatable installs
+RUN npm ci
 
-# Copy source files
+# Copy application source code and build it
 COPY . .
+RUN npm run build
 
-# Build the application
-RUN yarn build
+# Runtime Stage
+FROM node:20-slim
 
-EXPOSE 5000
+WORKDIR /usr/src/app
 
-CMD ["yarn", "start"]
+# Copy necessary files for runtime
+COPY package.json package-lock.json ./
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Install only production dependencies
+RUN npm ci --production
+
+# Set ENTRYPOINT to enforce the base command
+ENTRYPOINT ["node", "dist/src/main.js"]
