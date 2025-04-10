@@ -28,4 +28,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 RUN npm ci --production
 
 # Set ENTRYPOINT to enforce the base command
-ENTRYPOINT ["node", "dist/src/main.js"]
+ENTRYPOINT ["node", "dist/index.js"]
