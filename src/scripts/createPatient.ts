@@ -9,35 +9,35 @@ async function createPatient() {
   try {
     // Create patient credentials
     const patientCredentials = {
-      username: "John Smith",
-      email: "john@example.com",
-      password: await bcrypt.hash("Patient@123", 10),
+      username: "Jagadesh Chakali",
+      email: "jagjaggu@gmail.com",
+      password: await bcrypt.hash("Sainath@19", 10),
       role: "PATIENT",
-      userId: "PT1002",
+      userId: "PT1003",
     };
 
     // Create patient profile
     const patientProfile = {
-      patientId: "PT1002",
-      doctorId: "DOC101",
-      name: "John Smith",
-      email: "john@example.com",
+      patientId: "PT1003",
+      doctorId: "DOC1001",
+      name: "Jagadesh Chakali",
+      email: "jagjaggu@gmail.com",
       phone: "+91 9876543201",
       bloodGroup: "A+",
       gender: "Male",
-      birthDate: "15 Jun 1978",
-      age: 45,
+      birthDate: "1 Dec 2002",
+      age: 23,
       address: {
-        city: "Mumbai",
-        zipCode: "400001"
+        city: "Kurnool",
+        zipCode: "518002"
       },
       membership: "Active",
-      joinDate: "Jan 2023",
+      joinDate: "Feb 2025",
       emergencyContacts: [
         {
-          name: "Mary Smith",
-          relation: "Spouse",
-          phone: "+91 9876543202",
+          name: "Sainath",
+          relation: "Friend",
+          phone: "+91 9490863408",
         }
       ]
     };

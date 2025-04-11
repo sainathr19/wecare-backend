@@ -10,20 +10,25 @@ export interface IReport extends Document {
   doctorId: string;
   type: string;
   isViewed: boolean;
+  temperature: number;
+  bloodOxygen: number;
+  heartRate: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const ReportSchema = new Schema({
   reportId: { type: String, required: true, unique: true },
-  measurement: { type: String, required: true },
   timestamp: { type: String, required: true },
   source: { type: String, required: true },
   status: { type: String, required: true },
   patientId: { type: String, required: true },
   doctorId: { type: String, required: true },
   type: { type: String, required: true },
-  isViewed: { type: Boolean, default: false }
+  isViewed: { type: Boolean, default: false },
+  temperature: { type: String },
+  bloodOxygen: { type: Number, required: true },
+  heartRate: { type: Number, required: true },
 }, {
   timestamps: true
 });
