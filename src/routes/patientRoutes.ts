@@ -115,37 +115,6 @@ patientRouter.get("/reports/:reportId", verifyToken, async (req: Request, res: R
   }
 });
 
-// // Get biometric data
-// patientRouter.get("/biometrics", verifyToken, async (req: Request, res: Response) => {
-//   try {
-//     const requestedPatientId = req.query.patientId as string;
-//     const tokenUser = (req as any).user;
-
-//     if (!requestedPatientId) {
-//       response.err(res, "Patient ID is required", 400);
-//       return;
-//     }
-
-//     // Allow doctors to access any patient's biometric data
-//     if (tokenUser.role === "DOCTOR") {
-//       const data = await Biometric.find({ patientId: requestedPatientId });
-//       response.ok(res, data);
-//       return;
-//     }
-
-//     // For patients, verify they can only access their own data
-//     if (tokenUser.role === "PATIENT" && requestedPatientId !== tokenUser.userId) {
-//       response.err(res, "Unauthorized access", 403);
-//       return;
-//     }
-
-//     const data = await Biometric.find({ patientId: requestedPatientId });
-//     response.ok(res, data);
-//   } catch (error) {
-//     response.err(res, "Error fetching biometric data");
-//   }
-// });
-
 // Update patient profile
 patientRouter.put("/profile", verifyToken, async (req: Request, res: Response) => {
   try {
@@ -234,8 +203,10 @@ patientRouter.get("/ecg", verifyToken, async (req: Request, res: Response) => {
       };
     }
 
-    const ecgData = await ECG.find(filter).sort({ timestamp: 1 });
-
+    const ecgData = await ECG.find(filter)
+      .sort({ timestamp: -1 }) // Sort by timestamp descending
+      .limit(100); // Limit to latest 100 records
+      
     response.ok(res, {
       ecgData,
       total: ecgData.length
