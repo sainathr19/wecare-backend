@@ -66,7 +66,9 @@ doctorRouter.get("/reports", verifyToken, async (req: Request, res: Response) =>
       return;
     }
 
-    const reports = await Report.find({ doctorId });
+    const reports = await Report.find({ doctorId })
+      .sort({ timestamp: -1 }); // Sort by timestamp descending
+
     response.ok(res, { 
       reports,
       total: reports.length
@@ -77,12 +79,14 @@ doctorRouter.get("/reports", verifyToken, async (req: Request, res: Response) =>
 });
 
 doctorRouter.get("/reports/:reportId", verifyToken, async (req: Request, res: Response) => {
-  try {
+  try { 
+
     const reportId = req.params.reportId;
     const tokenUser = (req as any).user;
 
     // Find the report
-    const report = await Report.findOne({ reportId });
+    const report = await Report.findOne({ reportId })
+    .sort({ timestamp: -1 });
     if (!report) {
       response.err(res, "Report not found", 404);
       return;

@@ -3,7 +3,6 @@ import { response } from "../utils/responseHandler";
 import { verifyToken } from "../middlewares/auth";
 import Patient from "../models/Patient";
 import Report from "../models/Report";
-import Biometric from "../models/Biometric";
 import ECG from "../models/ECG";
 
 const patientRouter = express.Router();
@@ -74,7 +73,9 @@ patientRouter.get("/reports", verifyToken, async (req: Request, res: Response) =
       return;
     }
 
-    const patientReports = await Report.find({ patientId: requestedPatientId });
+    const patientReports = await Report.find({ patientId: requestedPatientId })
+      .sort({ timestamp: -1 }); // Sort by timestamp descending
+
     response.ok(res, {
       reports: patientReports,
       total: patientReports.length
@@ -90,7 +91,8 @@ patientRouter.get("/reports/:reportId", verifyToken, async (req: Request, res: R
     const reportId = req.params.reportId;
     const tokenUser = (req as any).user;
 
-    const report = await Report.findOne({ reportId });
+    const report = await Report.findOne({ reportId })
+      .sort({ timestamp: -1 }); // Sort by timestamp descending
 
     if (!report) {
       response.err(res, "Report not found", 404);
