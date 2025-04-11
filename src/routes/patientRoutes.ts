@@ -207,7 +207,7 @@ patientRouter.get("/ecg", verifyToken, async (req: Request, res: Response) => {
 
     const ecgData = await ECG.find(filter)
       .sort({ timestamp: -1 }) // Sort by timestamp descending
-      .limit(100); // Limit to latest 100 records
+      .limit(30); // Limit to latest 100 records
       
     response.ok(res, {
       ecgData,
