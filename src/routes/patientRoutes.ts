@@ -233,12 +233,11 @@ patientRouter.post("/submit-report", verifyToken, async (req: Request, res: Resp
       return;
     }
 
-    // Create report
     const report = new Report({
       reportId: `REP${Date.now()}`,
       patientId,
       doctorId: tokenUser.role === "DOCTOR" ? tokenUser.userId : (await Patient.findOne({ patientId }))?.doctorId || null,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(), // Use ISO format UTC timestamp
       source,
       status: 'Normal',
       type: 'Remote Checkup',
